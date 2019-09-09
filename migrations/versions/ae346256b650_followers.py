@@ -1,8 +1,8 @@
 """followers
 
-Revision ID: e387a5c99164
-Revises: 85d3bac066e5
-Create Date: 2019-09-03 09:52:30.722810
+Revision ID: ae346256b650
+Revises: 37f06a334dbf
+Create Date: 2017-09-17 15:41:30.211082
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'e387a5c99164'
-down_revision = '85d3bac066e5'
+revision = 'ae346256b650'
+down_revision = '37f06a334dbf'
 branch_labels = None
 depends_on = None
 
