@@ -6,6 +6,11 @@ from flask_babel import _, lazy_gettext as _l
 from app.models import User
 
 
+class MessageForm(FlaskForm):
+    message = TextAreaField(_l('消息'),validators=[DataRequired(),Length(min=0,max=400)])
+    submit = SubmitField(_l('Submit'))
+    
+
 class EditProfileForm(FlaskForm):
     username = StringField(_l('Username'), validators=[DataRequired()])
     about_me = TextAreaField(_l('About me'),

@@ -11,6 +11,8 @@ from flask_moment import Moment
 from flask_babel import Babel, lazy_gettext as _l
 from elasticsearch import Elasticsearch
 from config import Config
+from redis import Redis
+import rq
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -26,6 +28,9 @@ babel = Babel()
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+
+    app.redis = Redis.from_url(app.config['REDIS_URL'])
+    app.task_queue = rq.Queue('microblog-tasks',connection=app.redis)
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -45,6 +50,9 @@ def create_app(config_class=Config):
 
     from app.main import bp as main_bp
     app.register_blueprint(main_bp)
+
+    from app.charts import bp as charts_bp
+    app.register_blueprint(charts_bp)
 
     if not app.debug and not app.testing:
         if app.config['MAIL_SERVER']:
