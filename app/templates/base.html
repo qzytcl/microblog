@@ -32,17 +32,17 @@
                     {% if current_user.is_anonymous %}
                     <li><a href="{{ url_for('auth.login') }}">{{ _('Login') }}</a></li>
                     {% else %}
-                    <li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Profile') }}</a></li>
-                    <li><a href="{{ url_for('main.messages') }}">{{ _('消息') }}
+                    <li>
+                        <a href="{{ url_for('main.messages') }}">{{ _('Messages') }}
                             {% set new_messages = current_user.new_messages() %}
-                            {% if new_messages %}
                             <span id="message_count" class="badge"
                                   style="visibility: {% if new_messages %}visible
-                                                     {% else %}hidden {% endif %};">
+                                                     {% else %}hidden{% endif %};">
                                 {{ new_messages }}
-                            </spa
-                            {% endif %}
-                    </a></li>
+                            </span>
+                        </a>
+                    </li>
+                    <li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Profile') }}</a></li>
                     <li><a href="{{ url_for('auth.logout') }}">{{ _('Logout') }}</a></li>
                     {% endif %}
                 </ul>
@@ -53,6 +53,18 @@
 
 {% block content %}
     <div class="container">
+        {% if current_user.is_authenticated %}
+        {% with tasks = current_user.get_tasks_in_progress() %}
+        {% if tasks %}
+            {% for task in tasks %}
+            <div class="alert alert-success" role="alert">
+                {{ task.description }}
+                <span id="{{ task.id }}-progress">{{ task.get_progress() }}</span>%
+            </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+        {% endif %}
         {% with messages = get_flashed_messages() %}
         {% if messages %}
             {% for message in messages %}
@@ -70,51 +82,19 @@
     {{ super() }}
     {{ moment.include_moment() }}
     {{ moment.lang(g.locale) }}
-
-    <!-- <script type="text/javascript" src="https://assets.pyecharts.org/assets/echarts.min.js"></script> -->
     <script>
-        // function translate(sourceElem, destElem, sourceLang, destLang) {
-        //     $(destElem).html('<img src="{{ url_for('static', filename='loading.gif') }}">');
-        //     $.post('/translate', {
-        //         text: $(sourceElem).text(),
-        //         source_language: sourceLang,
-        //         dest_language: destLang
-        //     }).done(function(response) {
-        //         $(destElem).text(response['text'])
-        //     }).fail(function() {
-        //         $(destElem).text("{{ _('Error: Could not contact server.') }}");
-        //     });
-        // }
-        // var chart = echarts.init(document.getElementById('bar'), 'gray', {renderer: 'canvas'});
-        // var old_data = []
-        // $(
-        //     function() {
-        //         fetchData(chart)
-        //         setInterval(getDynamicData, 2000)
-        //     }
-        // );
-        // function fetchData(){
-        //     $.get('/lineChart', {
-        //         name: 'fushunlong',
-        //         subtitle: 'test2'
-        //     }).done(function(result) {
-        //         var opt =  JSON.parse(result);
-        //         chart.setOption(opt);
-        //         old_data = chart.getOption().series[0].data;
-        //     }).fail(function() {
-                
-        //     });
-        // }
-        // function getDynamicData(){
-        //     $.get('/lineDynamicData',{}).done(function(result){
-        //         // var opt =  JSON.parse(result);
-        //         // chart.setOption(opt);
-        //         old_data.push([result.name,result.value])
-        //         chart.setOption({
-        //             series:[{data:old_data}]
-        //         })
-        //     })
-        // }
+        function translate(sourceElem, destElem, sourceLang, destLang) {
+            $(destElem).html('<img src="{{ url_for('static', filename='loading.gif') }}">');
+            $.post('/translate', {
+                text: $(sourceElem).text(),
+                source_language: sourceLang,
+                dest_language: destLang
+            }).done(function(response) {
+                $(destElem).text(response['text'])
+            }).fail(function() {
+                $(destElem).text("{{ _('Error: Could not contact server.') }}");
+            });
+        }
         $(function () {
             var timer = null;
             var xhr = null;
@@ -157,12 +137,13 @@
                 }
             );
         });
-        // ...
         function set_message_count(n) {
             $('#message_count').text(n);
             $('#message_count').css('visibility', n ? 'visible' : 'hidden');
         }
-         // ...
+        function set_task_progress(task_id, progress) {
+            $('#' + task_id + '-progress').text(progress);
+        }
         {% if current_user.is_authenticated %}
         $(function() {
             var since = 0;
@@ -170,14 +151,12 @@
                 $.ajax('{{ url_for('main.notifications') }}?since=' + since).done(
                     function(notifications) {
                         for (var i = 0; i < notifications.length; i++) {
-                            
                             switch (notifications[i].name) {
                                 case 'unread_message_count':
                                     set_message_count(notifications[i].data);
                                     break;
                                 case 'task_progress':
-                                    set_task_progress (
-                                        notifications[i].data.task_id,
+                                    set_task_progress(notifications[i].data.task_id,
                                         notifications[i].data.progress);
                                     break;
                             }

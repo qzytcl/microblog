@@ -1,7 +1,7 @@
 server {
     # listen on port 80 (http)
     listen 80;
-    server_name _;
+    server_name www.dsiji.cn;
     location / {
         # redirect any requests to the same URL but on https
         return 301 https://$host$request_uri;
@@ -10,7 +10,7 @@ server {
 server {
     # listen on port 443 (https)
     listen 443 ssl;
-    server_name _;
+    server_name www.dsiji.cn;
 
     # location of the self-signed SSL certificate
     ssl_certificate /root/microblog/certs/cert.pem;
