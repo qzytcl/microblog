@@ -147,8 +147,7 @@
         {% if current_user.is_authenticated %}
         $(function() {
             var since = 0;
-            setInterval(function() {
-                $.ajax('{{ url_for('main.notifications') }}?since=' + since).done(
+             $.ajax('{{ url_for('main.notifications') }}?since=' + since).done(
                     function(notifications) {
                         for (var i = 0; i < notifications.length; i++) {
                             switch (notifications[i].name) {
@@ -164,7 +163,6 @@
                         }
                     }
                 );
-            }, 10000);
         });
         {% endif %}
     </script>
