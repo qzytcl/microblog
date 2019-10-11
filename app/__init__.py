@@ -51,7 +51,7 @@ def create_app(config_class=Config):
     app.register_blueprint(main_bp)
 
     from app.api import bp as api_bp
-    app.register_blueprint(api_bp,url_prefix='/api')
+    app.register_blueprint(api_bp, url_prefix='/api')
 
     if not app.debug and not app.testing:
         if app.config['MAIL_SERVER']:
@@ -93,7 +93,7 @@ def create_app(config_class=Config):
 
 @babel.localeselector
 def get_locale():
-    return 'zh_Hans_CN'
+    return current_app.config['LANGUAGES'][0]
 
 
 from app import models

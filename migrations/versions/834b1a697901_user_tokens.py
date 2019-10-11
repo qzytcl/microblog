@@ -1,8 +1,8 @@
-"""tokens
+"""user tokens
 
-Revision ID: 5ff5d086ceb4
+Revision ID: 834b1a697901
 Revises: c81bac34faab
-Create Date: 2019-10-09 15:26:18.660680
+Create Date: 2017-11-05 18:41:07.996137
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '5ff5d086ceb4'
+revision = '834b1a697901'
 down_revision = 'c81bac34faab'
 branch_labels = None
 depends_on = None
